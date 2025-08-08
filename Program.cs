@@ -10,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-         .AddMicrosoftIdentityWebApp(builder.Configuration, "MicrosoftEntraID");
+         .AddMicrosoftIdentityWebApp(builder.Configuration, "MicrosoftEntraID")
+         .EnableTokenAcquisitionToCallDownstreamApi(new string[] { "https://storage.azure.com/user_impersonation" })
+            .AddInMemoryTokenCaches();
 
 builder.Services.AddRazorPages().AddMvcOptions(options =>
   {
