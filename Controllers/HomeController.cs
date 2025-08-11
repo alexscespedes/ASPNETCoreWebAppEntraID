@@ -24,7 +24,20 @@ public class HomeController : Controller
         string[] scopes = new string[] { "https://storage.azure.com/user_impersonation" };
         string accessToken = await authorizationHeaderProvider.CreateAuthorizationHeaderForUserAsync(scopes);
 
-        ViewData["access_token"] = accessToken;
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Add("x-ms-version", "2024-05-04");
+        client.DefaultRequestHeaders.Add("Authorization", accessToken);
+
+        string containerName = "data";
+        string fileName = "universe.sql";
+
+        string storageAccountName = "appstorage90090030";
+        string blobUri = $"https://{storageAccountName}.blob.core.windows.net/{containerName}/{fileName}";
+
+        HttpResponseMessage message = await client.GetAsync(blobUri);
+        string blobContent = await message.Content.ReadAsStringAsync();
+
+        ViewData["blob_content"] = blobContent;
         return View();
     }
 
